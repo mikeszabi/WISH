@@ -15,6 +15,11 @@ import numpy as np
 from PIL import Image
 from cntk import load_model
 
+from skimage import io
+from skimage.transform import resize
+from skimage import img_as_ubyte
+from matplotlib import pyplot as plt
+
 image_path = r'd:\Projects\data\PRAKTIKER\images300x300'
 save_path= r'd:\Projects\data\PRAKTIKER\features\ALEXNET'
 
@@ -34,9 +39,15 @@ def dfs_walk(node, visited):
 def print_all_node_names(model):
     dfs_walk(model, set())
 
-pred = load_model('D:\Projects\models\IMAGENET\AlexNetBS.model') # ToDo: try Resnet 152
+base_folder = r'd:\Projects\WISH'
+model_file  = os.path.join(base_folder,'models','IMAGENET','AlexNetBS.model')
+labels_file = os.path.join(base_folder,'models','IMAGENET','synset_words.txt')
+
+
+pred = load_model(model_file) # ToDo: try Resnet 152
 print_all_node_names(pred)
-node_name = "z.x._._"
+node_name='z'
+#node_name = "z.x._._"
 node_in_graph = pred.find_by_name(node_name)
 output_nodes  = combine([node_in_graph.owner])
 
@@ -56,22 +67,33 @@ pred_out = combine([pred.outputs[3].owner])
 #        feat[fn.split('.')[0]]=10
 
               
-
+image_file=r'd:\DATA\PRAKTIKER\TestImages\Lakberendezés, világítás, bútor\halozati-konnektor-aljzat-606889-1417_img.jpg'
 
 ## Get images and labels
-labels_file = r'D:\Projects\models\IMAGENET\synset_words.txt'
 labels = np.loadtxt(labels_file, str, delimiter='\t')
 ##
 imgSize=227
 image_mean   = 128.0
-im=Image.open('d://Projects//data//PRAKTIKER//images300x300//283093_01_keleszto-tal-6l.jpg')
-im.show()
-im.thumbnail([imgSize, imgSize], Image.ANTIALIAS)
-image_data   = np.array(im, dtype=np.float32)
-image_data  -= image_mean
-image_data   = np.ascontiguousarray(np.transpose(image_data, (2, 0, 1)))
+#img=Image.open(image_file)
+#get rid of alpha channel
+#if img.format=='PNG':
+#    bg = Image.new("RGB", img.size, (255,255,255))
+#    bg.paste(img,img)
+#else:
+#    bg=img
+#bg.resize((imgSize,imgSize),resample=Image.ANTIALIAS)
+#bg.show()
+#image_data   = np.array(bg, dtype=np.float32)
+#image_data  -= image_mean
+#bgr_image = image_data[..., [2, 1, 0]]
+#pic = np.ascontiguousarray(np.rollaxis(bgr_image, 2))
+im=io.imread(image_file)
+rgb_image=img_as_ubyte(resize(im,(imgSize,imgSize))).astype('float32')
+rgb_image  -= image_mean
+bgr_image = rgb_image[..., [2, 1, 0]]
+pic = np.ascontiguousarray(np.rollaxis(bgr_image, 2))
 ii=np.zeros(shape=(1,3,imgSize,imgSize),dtype=np.float32)
-ii[0,]=image_data
+ii[0,]=pic
 
 ##
 featureOut = np.squeeze(output_nodes.eval({pred_out.arguments[0]:ii}))

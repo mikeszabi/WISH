@@ -67,8 +67,9 @@ def eval_and_write(model_file, node_name, output_file, minibatch_source, num_obj
 
 if __name__ == '__main__':
     # define location of model and data and check existence
-    model_file  = r'D:\Projects\models\IMAGENET\AlexNetBS.model'
-    map_file    = os.path.join(base_folder, "..", "DataSets", "grocery", "test.txt")
+    base_folder = r'd:\Projects\WISH'
+    model_file  = os.path.join(base_folder,'models','IMAGENET','AlexNetBS.model')
+    map_file    = os.path.join(base_folder, 'output', 'images_test.csv')
 
 
     # create minibatch source
@@ -78,17 +79,17 @@ if __name__ == '__main__':
     minibatch_source = create_mb_source(image_height, image_width, num_channels, map_file)
 
     # use this to print all node names of the model (and knowledge of the model to pick the correct one)
-    # print_all_node_names(model_file)
+    print_all_node_names(model_file)
 
     # use this to get 1000 class predictions (not yet softmaxed!)
-    # node_name = "z"
+    node_name = "z"
     # output_file = os.path.join(base_folder, "predOutput.txt")
 
     # use this to get 4096 features from the last fc layer
-    node_name = "z.x._._"
-    output_file = os.path.join('d:\Projects\data\PRAKTIKER\features\ALEXNET', 'fcOutput.txt')
+    #node_name = "z.x._._"
+    output_file = os.path.join(base_folder, 'output', 'fcOutput.txt')
 
     # evaluate model and write out the desired layer output
-    eval_and_write(model_file, node_name, output_file, minibatch_source, num_objects=5)
+    eval_and_write(model_file, node_name, output_file, minibatch_source, num_objects=10)
 
     print("Done. Wrote output to %s" % output_file)
