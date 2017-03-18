@@ -67,7 +67,7 @@ pred_out = combine([pred.outputs[3].owner])
 #        feat[fn.split('.')[0]]=10
 
               
-image_file=r'd:\DATA\PRAKTIKER\TestImages\Lakberendezés, világítás, bútor\halozati-konnektor-aljzat-606889-1417_img.jpg'
+image_file=r'd:\DATA\PRAKTIKER\TestImages\Kert\20976.jpeg'
 
 ## Get images and labels
 labels = np.loadtxt(labels_file, str, delimiter='\t')
