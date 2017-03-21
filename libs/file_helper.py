@@ -7,6 +7,9 @@ Created on Fri Mar 17 20:14:54 2017
 
 import os
 import glob
+import base64
+import json
+import numpy as np
 
 def walklevel(root_dir, level=1):
     root_dir = root_dir.rstrip(os.path.sep)
@@ -20,9 +23,10 @@ def walklevel(root_dir, level=1):
             
 def imagelist_in_depth(image_dir,level=1):
     image_list_indir=[]
-    included_extenstions = ['*.jpg', '*.bmp', '*.png', '*.gif']
+    included_extenstions = ['*.jpg', '*jpeg','*.bmp', '*.png', '*.gif']
     image_list_indir = []
     for root, dirs, files in walklevel(image_dir, level=level):
         for ext in included_extenstions:
             image_list_indir.extend(glob.glob(os.path.join(root, ext)))
     return image_list_indir
+
