@@ -18,7 +18,8 @@ import matplotlib.gridspec as gridspec
 
 import numpy as np
 %matplotlib qt5
-base_folder = r'd:\Projects\WISH'
+#base_folder = r'd:\Projects\WISH'
+base_folder = os.path.curdir
 feature_file=os.path.join(base_folder,'output','features.json')
 labels_file = os.path.join(base_folder,'models','IMAGENET','synset_words.txt')
 
