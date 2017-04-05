@@ -62,7 +62,7 @@ if __name__=='__main__':
 
     # This would be an argument you could pass in from command line
     parser.add_argument('-b', action='store', dest='b', type=str, required=False,
-                    default=r'e:\WISH')
+                    default=os.path.curdir)
     parser.add_argument('-m', action='store', dest='m', type=str, required=False,
                     default='ResNet_152')
    
@@ -73,7 +73,7 @@ if __name__=='__main__':
     # input, output, model directory
     
     model_type='ResNet_152'
-    softmaxed=True
+    softmaxed=False
     
     param=cfg.param(model_type)
     
