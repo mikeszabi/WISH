@@ -13,8 +13,8 @@ import json
 #base_folder = r'd:\Projects\WISH'
 base_folder = os.path.curdir
 
-#image_dir=r'C:\Users\SzMike\OneDrive\WISH\TestImages_2'
-image_dir=r'e:\WISH\data\classification'
+image_dir=r'C:\Users\SzMike\OneDrive\WISH\PraktikerImages'
+#image_dir=r'e:\WISH\data\classification'
 image_list_file=os.path.join(base_folder,'input','image_list.json')
 
 
