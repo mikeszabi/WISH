@@ -20,41 +20,56 @@ import numpy as np
 
 import cfg
 
-def create_cnn_features(param,image_list,cnn_model):
-      
+
+class cnn_features:
+    def __init__(self,param,model_file):
         
-    # Creating features
-    cnn_features={}
-    for image_file in image_list:
-              
-#        im=io.imread(image_file)
-#        # ToDo: check if valid image
-#        with warnings.catch_warnings():
-#            warnings.simplefilter("ignore")
-#            rgb_image=img_as_ubyte(resize(im,(param.imgSize,param.imgSize))).astype('float32')
-#        rgb_image  -= param.image_mean
-#        bgr_image = rgb_image[..., [2, 1, 0]]
-#        pic = np.ascontiguousarray(np.rollaxis(bgr_image, 2))
-        img=Image.open(image_file)
+        self.param=param
+                        
+        # LOAD model -only once!
+        print('...loading model')
+    
+        self.cnn_model=load_model(model_file) 
+        
+        print('...cnn model is loaded')
+        
+        node_in_graph = self.cnn_model.find_by_name(self.param.node_name)
+        self.feat_out  = combine([node_in_graph.owner])
+
+        if self.param.softmaxed:
+            self.feat_out = softmax(self.feat_out)
+        
+        
+    def create_cnn_feature(self,img):
+      
         #get rid of alpha channel
         if img.format=='PNG':
             bg = img.convert('RGB')
-#            Image.new("RGBA", img.size, (255,255,255,255))
-#            bg.paste(img,(0,0),img)
         else:
             bg=img
-        bg=bg.resize([param.imgSize, param.imgSize], Image.ANTIALIAS)
-        #bg.resize((param.imgSize,param.imgSize),resample=Image.ANTIALIAS)
+        bg=bg.resize([self.param.imgSize, self.param.imgSize], Image.ANTIALIAS)
         image_data   = np.array(bg, dtype=np.float32)
-        image_data  -= param.image_mean
+        image_data  -= self.param.image_mean
         bgr_image = image_data[..., [2, 1, 0]]
         pic = np.ascontiguousarray(np.rollaxis(bgr_image, 2))
-        ii=np.zeros(shape=(1,3,param.imgSize,param.imgSize),dtype=np.float32)
+        ii=np.zeros(shape=(1,3,self.param.imgSize,self.param.imgSize),dtype=np.float32)
         ii[0,]=pic
           
-        cnn_features[image_file]=(np.squeeze(feat_out.eval({cnn_model.arguments[0]:ii}))).tolist()
-    
-    return cnn_features
+        cnn_feature=(np.squeeze(self.feat_out.eval({self.cnn_model.arguments[0]:ii}))).tolist()
+        
+        return cnn_feature
+
+    def create_cnn_features(self,image_list):
+                      
+        # Creating features
+        cnn_feat={}
+        for image_file in image_list:
+                     
+            img=Image.open(image_file)
+            print(image_file)
+            cnn_feat[image_file]=self.create_cnn_feature(img)
+        
+        return cnn_feat
     
 if __name__=='__main__':
 # Initialize argument parse object
@@ -73,22 +88,13 @@ if __name__=='__main__':
     # input, output, model directory
     
     model_type='ResNet_152'
-    softmaxed=False
-    
+
     param=cfg.param(model_type)
     
-    image_list_file, feature_file, model_file = param.getDirs(base_folder=base_folder)
-    
-    # LOAD model -only once!
-    print('...loading model')
-
-    cnn_model=load_model(model_file) 
-
-    node_in_graph = cnn_model.find_by_name(param.node_name)
-    feat_out  = combine([node_in_graph.owner])
-
-    if softmaxed:
-        feat_out = softmax(feat_out)
+    image_list_file, feature_file, model_file =\
+            param.getDirs(base_folder=base_folder)
+   
+    cnf=cnn_features(param,model_file)
    
     # DO
     # Image list must have two columns
@@ -98,11 +104,11 @@ if __name__=='__main__':
         image_list = json.load(fp)
     # TODO: check if list    
         
-    cnn_features=create_cnn_features(param,image_list,cnn_model)
+    cnn_feat=cnf.create_cnn_features(image_list)
 
      # Write output
     with open(feature_file, 'w') as fp:
-        json.dump(cnn_features,fp)
+        json.dump(cnn_feat,fp)
     print('...features are created')    
     sys.exit(1)
             

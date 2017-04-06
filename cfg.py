@@ -32,6 +32,7 @@ class param:
         else:
             print('Unknown model')
             #return []
+        self.softmaxed=False
                
     def getDirs(self,base_folder=None):
         if base_folder is None:
