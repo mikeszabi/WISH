@@ -12,6 +12,8 @@ import argparse
 import json
 
 from cntk.ops import softmax
+#from cntk.device import set_default_device, cpu
+
 from cntk import load_model
 from cntk.ops import combine
 from PIL import Image
@@ -23,7 +25,7 @@ import cfg
 
 class cnn_features:
     def __init__(self,param,model_file):
-        
+        #set_default_device(cpu())
         self.param=param
                         
         # LOAD model -only once!
@@ -96,20 +98,22 @@ if __name__=='__main__':
    
     cnf=cnn_features(param,model_file)
    
-    # DO
-    # Image list must have two columns
-    # ToDo: Check is file exsist
+    while True:
     
-    with open(image_list_file, 'r') as fp:
-        image_list = json.load(fp)
-    # TODO: check if list    
-        
-    cnn_feat=cnf.create_cnn_features(image_list)
-
-     # Write output
-    with open(feature_file, 'w') as fp:
-        json.dump(cnn_feat,fp)
-    print('...features are created')    
+        if os.path.isfile(image_list_file):
+            print('...processing new image list')
+            try:
+                with open(image_list_file, 'r') as fp:
+                    image_list = json.load(fp)
+                cnn_feat=cnf.create_cnn_features(image_list)
+                with open(feature_file, 'w') as fp:
+                    json.dump(cnn_feat,fp)
+                print('...features are created')    
+                os.remove(image_list_file)
+                break
+            except:
+                break
+    
     sys.exit(1)
             
 
