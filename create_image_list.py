@@ -5,7 +5,6 @@ Created on Fri Mar 17 20:12:01 2017
 @author: SzMike
 """
 
-import __init__
 import file_helper
 import os
 import json
@@ -13,7 +12,7 @@ import json
 #base_folder = r'd:\Projects\WISH'
 base_folder = os.path.curdir
 
-image_dir=r'C:\Users\SzMike\OneDrive\WISH\PraktikerImages'
+image_dir=r'c:\Users\picturio\OneDrive\WISH\PraktikerImages_All'
 #image_dir=r'e:\WISH\data\classification'
 image_list_file=os.path.join(base_folder,'input','image_list.json')
 
