@@ -24,11 +24,16 @@ class param:
             self.model_file  = 'ResNet_152.model'
             self.node_name = "OutputNodes.z"
         elif model_type=='AlexNetBS':
-            self.imgSize=224
+            self.imgSize=227
             self.image_mean   = 128.0
             self.model_file  = 'AlexNetBS.model'
             self.node_name = "z"
             #node_name = "z.x._._"
+        elif model_type=='AlexNetBS_2nd':
+            self.imgSize=227
+            self.image_mean   = 128.0
+            self.model_file  = 'AlexNetBS.model'
+            self.node_name = "z.x._._"
         else:
             print('Unknown model')
             #return []
