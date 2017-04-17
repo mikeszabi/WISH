@@ -18,6 +18,7 @@ import json
 
 import cnn_feature_service
 import cfg
+user='SzMike' # picturio
 
 class cnn_features:
     def __init__(self,):
@@ -82,9 +83,11 @@ class ImageViewer(tk.Frame):
 #            self.sim_panel[i].grid(row=1,column=i+1)
         
     def load_file(self):
-        query_path = askopenfilename(filetypes=(("JPEG", "*.jpg"),
-                                           ("PNG", "*.png"),
-                                           ("BMP", "*.bmp") ))
+        query_path = askopenfilename(filetypes=(("JPEG", "*.jpeg"),\
+                                           ("JPG", "*.jpg"),\
+                                           ("PNG", "*.png"),\
+                                           ("BMP", "*.bmp"),\
+                                           ("ALL", "*.*")))
         self.query_im=Image.open(query_path)
         self.query_im.thumbnail((200,200))
         self.query_img = ImageTk.PhotoImage(self.query_im)
@@ -108,7 +111,9 @@ class ImageViewer(tk.Frame):
         result_indices = np.argsort(cf)[0,0:3]
         
         for i in range(self.top_count):
-            self.sim_im[i] = Image.open(cnn_f.db_files_list[result_indices[i]])
+            image_file=cnn_f.db_files_list[result_indices[i]]
+            image_file=image_file.replace('picturio',user)
+            self.sim_im[i] = Image.open(image_file)
             self.sim_im[i].thumbnail((200,200))
             self.sim_img[i] = ImageTk.PhotoImage(self.sim_im[i])
             self.sim_panel[i] = tk.Label(self, image = self.sim_img[i], \
