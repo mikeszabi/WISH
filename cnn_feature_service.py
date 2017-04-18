@@ -12,16 +12,51 @@ import argparse
 import json
 
 from cntk.ops import softmax
-#from cntk.device import set_default_device, cpu
-
+from cntk.device import set_default_device, cpu
 from cntk import load_model
 from cntk.ops import combine
 from PIL import Image
+
+from sklearn.metrics import pairwise
 
 import numpy as np
 
 import cfg
 
+class cnn_db_features:
+    def __init__(self,):
+        set_default_device(cpu())
+
+        base_folder = os.path.abspath(os.path.curdir)        
+        # input, output, model directory
+        model_type='ResNet_152'
+        
+        self.param=cfg.param(model_type)
+        
+        self.image_list_file, feature_file, model_file = self.param.getDirs(base_folder=base_folder)
+        
+        self.cnf=cnn_features(self.param,model_file)
+        
+        self.db_feature_file=str.replace(feature_file,'features','db_features')
+        
+        self.db_features_dict=self.load_db_features(self.db_feature_file)
+        self.db_files_list=list(self.db_features_dict.keys())
+        self.db_features=np.array([v for k,v in self.db_features_dict.items()])
+        
+        
+    def load_db_features(self, db_feature_file):
+        with open(db_feature_file, 'r') as fp:
+            db_features = json.load(fp)
+        return db_features
+        
+        
+    def create_feature(self, img):
+        feat=self.cnf.create_cnn_feature(img)
+        return feat
+    
+    def compare_feature(self,feat,db_features):
+        dist=pairwise.euclidean_distances(feat,db_features)
+        return dist
 
 class cnn_features:
     def __init__(self,param,model_file):

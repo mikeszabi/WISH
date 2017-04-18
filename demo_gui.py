@@ -8,52 +8,14 @@ Created on Mon Apr  3 21:31:04 2017
 import tkinter as tk
 import numpy as np
 from tkinter.filedialog import askopenfilename
-import os
-from cntk import load_model
-from cntk.device import set_default_device, cpu
 from PIL import Image, ImageTk
-from sklearn.metrics import pairwise
-import json
+
+import object_detection
 
 
 import cnn_feature_service
-import cfg
 user='SzMike' # picturio
 
-class cnn_features:
-    def __init__(self,):
-        set_default_device(cpu())
-
-        base_folder = os.path.abspath(os.path.curdir)        
-        # input, output, model directory
-        model_type='ResNet_152'
-        
-        self.param=cfg.param(model_type)
-        
-        self.image_list_file, feature_file, model_file = self.param.getDirs(base_folder=base_folder)
-        
-        self.cnf=cnn_feature_service.cnn_features(self.param,model_file)
-        
-        self.db_feature_file=str.replace(feature_file,'features','db_features')
-        
-        self.db_features_dict=self.load_db_features(self.db_feature_file)
-        self.db_files_list=list(self.db_features_dict.keys())
-        self.db_features=np.array([v for k,v in self.db_features_dict.items()])
-        
-        
-    def load_db_features(self, db_feature_file):
-        with open(db_feature_file, 'r') as fp:
-            db_features = json.load(fp)
-        return db_features
-        
-        
-    def create_feature(self, img):
-        feat=self.cnf.create_cnn_feature(img)
-        return feat
-    
-    def compare_feature(self,feat,db_features):
-        dist=pairwise.euclidean_distances(feat,db_features)
-        return dist
 
 class ImageViewer(tk.Frame):
     def __init__(self, master,cnn_f):
@@ -69,7 +31,10 @@ class ImageViewer(tk.Frame):
        
         self.query_im = None
         self.query_img = None
+        self.q2_im = None
+        self.q2_img = None
         self.query_panel = None
+        self.q2_panel = None
 #        self.query_panel = tk.Label(self, image = self.query_img)
 #        self.query_panel.grid(row=1,column=0)
         
@@ -95,6 +60,12 @@ class ImageViewer(tk.Frame):
         self.query_panel = tk.Label(self, image = self.query_img)
         self.query_panel.grid(row=1,column=0)
         
+        self.q2_im=object_detection.find_salient_objects(self.query_im)
+        self.q2_img = ImageTk.PhotoImage(self.q2_im)
+        self.q2_panel = tk.Label(self, image = self.q2_img)
+
+        self.q2_panel.grid(row=2,column=0)
+
 #        for i in range(self.top_count):
 #            self.sim_im[i] = Image.open(query_path)
 #            self.sim_im[i].thumbnail((100,100))
@@ -105,7 +76,7 @@ class ImageViewer(tk.Frame):
     def find_similar(self):
       
         print('...creating cnn features for query image')
-        query_feat=np.array(self.cnn_f.create_feature(self.query_im))
+        query_feat=np.array(self.cnn_f.create_feature(self.q2_im))
         cf=self.cnn_f.compare_feature(query_feat.reshape(1,-1),cnn_f.db_features)
         
         result_indices = np.argsort(cf)[0,0:3]
@@ -124,7 +95,7 @@ class ImageViewer(tk.Frame):
 if __name__ == "__main__":
     root = tk.Tk()
     
-    cnn_f=cnn_features()
+    cnn_f=cnn_feature_service.cnn_db_features()
     
     im_w=ImageViewer(root,cnn_f)
     im_w.pack(fill="both", expand=True)

@@ -8,12 +8,11 @@ import os
 import pandas as pd
 import pymssql
 import json
-import codecs
 
-
+user='SzMike'
 base_folder = os.path.curdir
 
-image_dir=r'C:\Users\picturio\OneDrive\WISH'
+image_dir=r'C:\Users\SzMike\OneDrive\WISH'
 #image_dir=r'e:\WISH\data\classification'
 image_list_file=os.path.join(base_folder,'input','image_list.json')
 image_category_file=os.path.join(base_folder,'input','image_category.json')
