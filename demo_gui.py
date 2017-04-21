@@ -48,11 +48,11 @@ class ImageViewer(tk.Frame):
 #            self.sim_panel[i].grid(row=1,column=i+1)
         
     def load_file(self):
-        query_path = askopenfilename(filetypes=(("JPEG", "*.jpeg"),\
+        query_path = askopenfilename(filetypes=(("ALL", "*.*"),\
+                                           ("JPEG", "*.jpeg"),\
                                            ("JPG", "*.jpg"),\
                                            ("PNG", "*.png"),\
-                                           ("BMP", "*.bmp"),\
-                                           ("ALL", "*.*")))
+                                           ("BMP", "*.bmp")))
         self.query_im=Image.open(query_path)
         self.query_im.thumbnail((200,200))
         self.query_img = ImageTk.PhotoImage(self.query_im)
@@ -76,7 +76,7 @@ class ImageViewer(tk.Frame):
     def find_similar(self):
       
         print('...creating cnn features for query image')
-        query_feat=np.array(self.cnn_f.create_feature(self.q2_im))
+        query_feat=np.array(self.cnn_f.create_feature(self.query_im))
         cf=self.cnn_f.compare_feature(query_feat.reshape(1,-1),cnn_f.db_features)
         
         result_indices = np.argsort(cf)[0,0:3]

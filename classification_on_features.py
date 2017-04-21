@@ -34,7 +34,7 @@ with open(feature_file, 'r') as fp:
 num_rows = 2
 num_cols = 5
 
-fig = plt.figure()
+fig = plt.figure(figsize=(20,10))
 gs = gridspec.GridSpec(num_rows, num_cols, wspace=0.0)
 
 ax = [plt.subplot(gs[i]) for i in range(num_rows*num_cols)]
