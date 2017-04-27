@@ -23,6 +23,11 @@ import numpy as np
 
 import cfg
 
+def load_db_features(db_feature_file):
+    with open(db_feature_file, 'r') as fp:
+        db_features = json.load(fp)
+    return db_features
+
 class cnn_db_features:
     def __init__(self,):
         set_default_device(cpu())
@@ -39,15 +44,9 @@ class cnn_db_features:
         
         self.db_feature_file=str.replace(feature_file,'features','db_features')
         
-        self.db_features_dict=self.load_db_features(self.db_feature_file)
+        self.db_features_dict=load_db_features(self.db_feature_file)
         self.db_files_list=list(self.db_features_dict.keys())
         self.db_features=np.array([v for k,v in self.db_features_dict.items()])
-        
-        
-    def load_db_features(self, db_feature_file):
-        with open(db_feature_file, 'r') as fp:
-            db_features = json.load(fp)
-        return db_features
         
         
     def create_feature(self, img):

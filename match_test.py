@@ -40,7 +40,7 @@ image_list_indir=file_helper.imagelist_in_depth(test_image_dir,level=1)
 query_category={}
 match_cat={}
 match_im={}
-
+ 
 match=0
 for q_im in image_list_indir:
     cont_dir=q_im.split('\\')[-2]
@@ -84,13 +84,12 @@ for q_im in image_list_indir:
         sim_im=Image.open(s_im.replace('picturio',onedrive_use))
         sim_im.thumbnail((300,300))
         ax=plt.subplot(1,4,i+1)
-        plt.tight_layout()
         ax.imshow(sim_im)
         ax.set_title(db_categories[s_im])
         ax.axis('off')
    
     
-plt.close('all')    
+#plt.close('all')    
 
 
 
