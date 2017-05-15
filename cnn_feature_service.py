@@ -29,12 +29,11 @@ def load_db_features(db_feature_file):
     return db_features
 
 class cnn_db_features:
-    def __init__(self,):
+    def __init__(self,model_type='ResNet_152'):
         set_default_device(cpu())
 
         base_folder = os.path.abspath(os.path.curdir)        
         # input, output, model directory
-        model_type='ResNet_152'
         
         self.param=cfg.param(model_type)
         
@@ -123,7 +122,7 @@ if __name__=='__main__':
     base_folder = os.path.abspath(inargs.b)        
     # input, output, model directory
     
-    model_type='ResNet_152'
+    model_type='AlexNetBS_2nd'
 
     param=cfg.param(model_type)
     
@@ -131,22 +130,26 @@ if __name__=='__main__':
             param.getDirs(base_folder=base_folder)
    
     cnf=cnn_features(param,model_file)
-   
-    while True:
     
-        if os.path.isfile(image_list_file):
-            print('...processing new image list')
-            try:
-                with open(image_list_file, 'r') as fp:
-                    image_list = json.load(fp)
-                cnn_feat=cnf.create_cnn_features(image_list)
-                with open(feature_file, 'w') as fp:
-                    json.dump(cnn_feat,fp)
-                print('...features are created')    
-                os.remove(image_list_file)
-                break
-            except:
-                break
+    if os.path.isfile(image_list_file):
+   
+        while True:
+        
+            if os.path.isfile(image_list_file):
+                print('...processing new image list')
+                try:
+                    with open(image_list_file, 'r') as fp:
+                        image_list = json.load(fp)
+                    cnn_feat=cnf.create_cnn_features(image_list)
+                    with open(feature_file, 'w') as fp:
+                        json.dump(cnn_feat,fp)
+                    print('...features are created')    
+                    os.remove(image_list_file)
+                    break
+                except:
+                    break
+    else:
+        print('No images to process')                    
     
     sys.exit(1)
             
