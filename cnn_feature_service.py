@@ -29,21 +29,22 @@ def load_db_features(db_feature_file):
     return db_features
 
 class cnn_db_features:
-    def __init__(self,model_type='ResNet_152'):
-        set_default_device(cpu())
+    def __init__(self,model_type='ResNet_152',db_feature_file=None):
+        #set_default_device(cpu())
 
         base_folder = os.path.abspath(os.path.curdir)        
         # input, output, model directory
+        param=cfg.param(model_type)
+        self.image_list_file, feature_file, model_file = param.getDirs(base_folder=base_folder)
+        # model_file from model directory
+        self.cnf=cnn_features(param,model_file)
         
-        self.param=cfg.param(model_type)
+        if not db_feature_file:
+            # default db_features.json is loaded from output dir
+            db_feature_file=str.replace(feature_file,'features','db_features')
         
-        self.image_list_file, feature_file, model_file = self.param.getDirs(base_folder=base_folder)
+        self.db_features_dict=load_db_features(db_feature_file)           
         
-        self.cnf=cnn_features(self.param,model_file)
-        
-        self.db_feature_file=str.replace(feature_file,'features','db_features')
-        
-        self.db_features_dict=load_db_features(self.db_feature_file)
         self.db_files_list=list(self.db_features_dict.keys())
         self.db_features=np.array([v for k,v in self.db_features_dict.items()])
         
@@ -122,7 +123,7 @@ if __name__=='__main__':
     base_folder = os.path.abspath(inargs.b)        
     # input, output, model directory
     
-    model_type='AlexNetBS_2nd'
+    model_type=inargs.m
 
     param=cfg.param(model_type)
     
