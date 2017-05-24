@@ -18,7 +18,7 @@ import matplotlib.gridspec as gridspec
 
 %matplotlib qt5
 
-model_type='AlexNetBS_2nd'
+model_type='ResNet_152'
 
 onedrive_user='SzMike'
 
@@ -29,7 +29,7 @@ test_image_dir=r'c:\Users\\'+onedrive_user+'\OneDrive\WISH\TestImages_Praktiker'
 #image_dir=r'e:\WISH\data\classification'
 db_category_file=r'c:\Users\\'+onedrive_user+'\OneDrive\WISH\ProductImages\image_category.json'
 
-cnn_f=cnn_feature_service.cnn_db_features(model_type=model_type,db_feature_file=r'd:\Projects\WISH\output\db_features_AlexNetBS_2nd_4096_praktiker.json')
+cnn_f=cnn_feature_service.cnn_db_features(model_type=model_type,db_feature_file=r'c:\Users\\'+onedrive_user+'\OneDrive\WISH\Features\db_features_ResNet152_1000_praktiker.json')
 
 with open(db_category_file, 'r', encoding='utf-16') as fp:
     temp_categories = json.load(fp)
@@ -77,9 +77,12 @@ for q_im in image_list_indir:
     match_cat[q_im]=m_cat
     match_im[q_im]=m_im         
 
+"""
+"""
+
 import unicodecsv as csv
 
-out = open('eggs.csv', 'wb')
+out = open('match_res'+model_type+'.csv', 'wb')
 w = csv.DictWriter(out, delimiter=',', fieldnames=['imID','m_catID','a_catID_1','a_catID_2','a_catID_3'])
 w.writeheader()
 for key in match_cat.keys():

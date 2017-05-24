@@ -9,6 +9,8 @@ import tkinter as tk
 import numpy as np
 from tkinter.filedialog import askopenfilename
 from PIL import Image, ImageTk
+import os
+import json
 
 #import object_detection
 
@@ -18,11 +20,12 @@ user='SzMike' # picturio
 
 
 class ImageViewer(tk.Frame):
-    def __init__(self, master,cnn_f):
+    def __init__(self, master,cnn_f,db_categories):
         tk.Frame.__init__(self, master, background="green")
         
-        self.top_count = 6
+        self.top_count = 3
         self.cnn_f=cnn_f
+        self.db_categories=db_categories
 
         browse_button = tk.Button(self, text="Browse", command=self.load_file, width=10)
         browse_button.grid(row=0, column=0, sticky=tk.W)
@@ -54,7 +57,7 @@ class ImageViewer(tk.Frame):
                                            ("PNG", "*.png"),\
                                            ("BMP", "*.bmp")))
         self.query_im=Image.open(query_path)
-        self.query_im.thumbnail((200,200))
+        self.query_im.thumbnail((400,400))
         self.query_img = ImageTk.PhotoImage(self.query_im)
         
         self.query_panel = tk.Label(self, image = self.query_img)
@@ -87,19 +90,29 @@ class ImageViewer(tk.Frame):
             self.sim_im[i] = Image.open(image_file)
             self.sim_im[i].thumbnail((200,200))
             self.sim_img[i] = ImageTk.PhotoImage(self.sim_im[i])
+            txt = str(cf[0,result_indices[i]])+'\n'+self.db_categories[os.path.basename(image_file)]
             self.sim_panel[i] = tk.Label(self, image = self.sim_img[i], \
-                          text=str(cf[0,result_indices[i]]),\
-                                  compound=tk.BOTTOM)
+                          text=txt, compound=tk.BOTTOM)
             self.sim_panel[i].grid(row=1+i,column=1)
 
 if __name__ == "__main__":
     root = tk.Tk()
     
+    onedrive_user='SzMike'
     model_type='ResNet_152'
-    db_feature_file=r'd:\Projects\WISH\output\db_features_Resnet152_1000_praktiker_full.json'
+    db_feature_file=r'c:\Users\\'+onedrive_user+'\OneDrive\WISH\Features\db_features_ResNet152_1000_praktiker.json'
+    db_category_file=r'c:\Users\\'+onedrive_user+'\OneDrive\WISH\ProductImages\image_category.json'
+
+    with open(db_category_file, 'r', encoding='utf-16') as fp:
+        temp_categories = json.load(fp)
+
+    db_categories={}
+    for items in temp_categories.keys():
+        db_categories[os.path.basename(items)]=temp_categories[items]
+
     
     cnn_f=cnn_feature_service.cnn_db_features(model_type=model_type,db_feature_file=db_feature_file)
     
-    im_w=ImageViewer(root,cnn_f)
+    im_w=ImageViewer(root,cnn_f,db_categories)
     im_w.pack(fill="both", expand=True)
     root.mainloop()
