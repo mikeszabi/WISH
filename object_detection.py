@@ -12,7 +12,7 @@ from PIL import Image
 import selectivesearch
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import selectivesearch
+import os
 
 def find_salient_objects(im,vis_diag=False):
     img=np.array(im)
@@ -54,7 +54,7 @@ def find_rois(im0,vis_diag=False):
 
     # draw rectangles on the original image
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(6, 6))
-    ax.imshow(img)
+    ax.imshow(im0)
     for x, y, w, h in candidates:
         #print x, y, w, h
         rect = mpatches.Rectangle(

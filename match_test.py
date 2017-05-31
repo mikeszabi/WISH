@@ -45,7 +45,9 @@ image_list_indir=file_helper.imagelist_in_depth(test_image_dir,level=1)
 query_category={}
 match_cat={}
 match_im={}
- 
+
+top_count=5
+
 match=0
 for q_im in image_list_indir:
     cont_dir=q_im.split('\\')[-2]
@@ -56,11 +58,11 @@ for q_im in image_list_indir:
     cf=cnn_f.compare_feature(query_feat.reshape(1,-1),cnn_f.db_features)
     print('---------------------')
     print(cf.min())    
-    result_indices = np.argsort(cf)[0,0:3]
+    result_indices = np.argsort(cf)[0,0:top_count]
     print(cont_dir)
     m_cat=[]
     m_im=[]
-    for i in range(3):
+    for i in range(top_count):
         image_file=cnn_f.db_files_list[result_indices[i]]
         try:
             cat=db_categories[os.path.basename(image_file)]
@@ -94,12 +96,12 @@ for key in match_cat.keys():
 out.close()
 
 for q_im in image_list_indir:
-    fig = plt.figure(figsize=(4,1))
+    fig = plt.figure(figsize=(top_count+1,1))
     fig.suptitle(q_im)
     query_im=Image.open(q_im)
     query_im.thumbnail((300,300))
    
-    ax1=plt.subplot(1,4,1)
+    ax1=plt.subplot(1,top_count+1,1)
     ax1.imshow(query_im)
     ax1.set_title(query_category[q_im])
     ax1.axis('off')
@@ -108,7 +110,7 @@ for q_im in image_list_indir:
         i+=1
         sim_im=Image.open(s_im.replace('picturio',onedrive_user))
         sim_im.thumbnail((300,300))
-        ax=plt.subplot(1,4,i+1)
+        ax=plt.subplot(1,top_count+1,i+1)
         ax.imshow(sim_im)
         ax.set_title(db_categories[os.path.basename(s_im)])
         ax.axis('off')

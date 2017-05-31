@@ -60,6 +60,9 @@ class ImageViewer(tk.Frame):
         self.query_im.thumbnail((400,400))
         self.query_img = ImageTk.PhotoImage(self.query_im)
         
+        if self.query_panel:
+            self.query_panel.grid_forget()
+            
         self.query_panel = tk.Label(self, image = self.query_img)
         self.query_panel.grid(row=1,column=0)
         
@@ -69,12 +72,9 @@ class ImageViewer(tk.Frame):
 #
 #        self.q2_panel.grid(row=2,column=0)
 
-#        for i in range(self.top_count):
-#            self.sim_im[i] = Image.open(query_path)
-#            self.sim_im[i].thumbnail((100,100))
-#            self.sim_img[i] = ImageTk.PhotoImage(self.sim_im[i])
-#            self.sim_panel[i] = tk.Label(self, image = self.sim_img[i])
-#            self.sim_panel[i].grid(row=1+i,column=1)
+        for i in range(self.top_count):  
+            if self.sim_panel[i]:
+                self.sim_panel[i].grid_forget()
         
     def find_similar(self):
       
