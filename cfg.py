@@ -23,6 +23,11 @@ class param:
             self.image_mean   = 128.0
             self.model_file  = 'ResNet_152.model'
             self.node_name = "OutputNodes.z"
+        elif model_type=='VGG19':
+            self.imgSize=224
+            self.image_mean   = 128.0
+            self.model_file  = 'ResNet_152.model'
+            self.node_name = "OutputNodes.z"
         elif model_type=='AlexNetBS':
             self.imgSize=227
             self.image_mean   = 128.0
