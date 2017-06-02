@@ -15,6 +15,7 @@ from matplotlib import pyplot as plt
 import cnn_feature_service
 import object_detection
 import matplotlib.gridspec as gridspec
+import unicodecsv as csv
 
 %matplotlib qt5
 
@@ -29,7 +30,8 @@ test_image_dir=r'c:\Users\\'+onedrive_user+'\OneDrive\WISH\TestImages_Praktiker'
 #image_dir=r'e:\WISH\data\classification'
 db_category_file=r'c:\Users\\'+onedrive_user+'\OneDrive\WISH\ProductImages\image_category.json'
 
-cnn_f=cnn_feature_service.cnn_db_features(model_type=model_type,db_feature_file=r'c:\Users\\'+onedrive_user+'\OneDrive\WISH\Features\db_features_ResNet152_1000_praktiker.json')
+cnn_f=cnn_feature_service.cnn_db_features(model_type=model_type,\
+                                          db_feature_file=r'c:\Users\\'+onedrive_user+'\OneDrive\WISH\Features\db_features_ResNet152_1000_praktiker.json')
 
 with open(db_category_file, 'r', encoding='utf-16') as fp:
     temp_categories = json.load(fp)
@@ -55,15 +57,15 @@ for q_im in image_list_indir:
     query_im=Image.open(q_im)
     query_im.thumbnail((300,300))
     query_feat=np.array(cnn_f.create_feature(query_im)) 
-    cf=cnn_f.compare_feature(query_feat.reshape(1,-1),cnn_f.db_features)
+    cf=cnn_f.compare_feature(query_feat.reshape(1,-1),cnn_f.db_features,metric='cosine')
     print('---------------------')
     print(cf.min())    
-    result_indices = np.argsort(cf)[0,0:top_count]
+    result_indices = np.argsort(cf,axis=0)[0:top_count]
     print(cont_dir)
     m_cat=[]
     m_im=[]
-    for i in range(top_count):
-        image_file=cnn_f.db_files_list[result_indices[i]]
+    for i in range(len(result_indices)):
+        image_file=cnn_f.db_files_list[result_indices[i,0]]
         try:
             cat=db_categories[os.path.basename(image_file)]
             print(cat)
@@ -82,7 +84,10 @@ for q_im in image_list_indir:
 """
 """
 
-import unicodecsv as csv
+n_im = len(image_list_indir)
+
+print(match/n_im)
+
 
 out = open('match_res'+model_type+'.csv', 'wb')
 w = csv.DictWriter(out, delimiter=',', fieldnames=['imID','m_catID','a_catID_1','a_catID_2','a_catID_3'])
@@ -95,28 +100,27 @@ for key in match_cat.keys():
                 'a_catID_1' : val[0], 'a_catID_2' : val[1], 'a_catID_3' : val[2]})
 out.close()
 
-for q_im in image_list_indir:
-    fig = plt.figure(figsize=(top_count+1,1))
-    fig.suptitle(q_im)
-    query_im=Image.open(q_im)
-    query_im.thumbnail((300,300))
-   
-    ax1=plt.subplot(1,top_count+1,1)
-    ax1.imshow(query_im)
-    ax1.set_title(query_category[q_im])
-    ax1.axis('off')
-    i=0
-    for s_im in match_im[q_im]:
-        i+=1
-        sim_im=Image.open(s_im.replace('picturio',onedrive_user))
-        sim_im.thumbnail((300,300))
-        ax=plt.subplot(1,top_count+1,i+1)
-        ax.imshow(sim_im)
-        ax.set_title(db_categories[os.path.basename(s_im)])
-        ax.axis('off')
-   
+#for q_im in image_list_indir:
+#    fig = plt.figure(figsize=(top_count+1,1))
+#    fig.suptitle(q_im)
+#    query_im=Image.open(q_im)
+#    query_im.thumbnail((300,300))
+#   
+#    ax1=plt.subplot(1,top_count+1,1)
+#    ax1.imshow(query_im)
+#    ax1.set_title(query_category[q_im])
+#    ax1.axis('off')
+#    i=0
+#    for s_im in match_im[q_im]:
+#        i+=1
+#        sim_im=Image.open(s_im.replace('picturio',onedrive_user))
+#        sim_im.thumbnail((300,300))
+#        ax=plt.subplot(1,top_count+1,i+1)
+#        ax.imshow(sim_im)
+#        ax.set_title(db_categories[os.path.basename(s_im)])
+#        ax.axis('off')
+#   
     
 #plt.close('all')    
-
 
 

@@ -40,7 +40,7 @@ def print_all_node_names(model):
     dfs_walk(model, set())
 
 base_folder = r'd:\Projects\WISH'
-model_file  = os.path.join(base_folder,'models','IMAGENET','AlexNetBS.model')
+model_file  = os.path.join(base_folder,'models','IMAGENET','VGG19_ImageNet_Caffe.model')
 labels_file = os.path.join(base_folder,'models','IMAGENET','synset_words.txt')
 
 

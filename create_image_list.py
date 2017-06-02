@@ -15,6 +15,7 @@ base_folder = os.path.curdir
 onedrive_user='SzMike' # picturio
 
 image_dir=os.path.join(r'c:\Users',onedrive_user,'OneDrive\WISH\ProductImages')
+image_dir=os.path.join(r'c:\Users',onedrive_user,'OneDrive\WISH\TestImages_Praktiker')
 
 #image_dir=r'd:\DATA\Alinari'
 

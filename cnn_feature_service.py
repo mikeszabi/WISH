@@ -38,6 +38,7 @@ class cnn_db_features:
         self.image_list_file, feature_file, model_file = param.getDirs(base_folder=base_folder)
         # model_file from model directory
         self.cnf=cnn_features(param,model_file)
+        self.metric='euclidean'
         
         if not db_feature_file:
             # default db_features.json is loaded from output dir
@@ -53,8 +54,10 @@ class cnn_db_features:
         feat=self.cnf.create_cnn_feature(img)
         return feat
     
-    def compare_feature(self,feat,db_features):
-        dist=pairwise.euclidean_distances(feat,db_features)
+    def compare_feature(self,feat,db_features,metric='euclidean'):
+#        https://docs.scipy.org/doc/scipy/reference/spatial.distance.html
+        self.metric=metric
+        dist=pairwise.pairwise_distances(db_features,feat,metric=self.metric)
         return dist
 
 class cnn_features:
