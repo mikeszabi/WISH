@@ -12,10 +12,10 @@ import json
 #base_folder = r'd:\DATA\Alinari\'
 base_folder = os.path.curdir
 
-onedrive_user='SzMike' # picturio
+onedrive_user='picturio' # picturio
 
 image_dir=os.path.join(r'c:\Users',onedrive_user,'OneDrive\WISH\ProductImages')
-image_dir=os.path.join(r'c:\Users',onedrive_user,'OneDrive\WISH\TestImages_Praktiker')
+#image_dir=os.path.join(r'c:\Users',onedrive_user,'OneDrive\WISH\TestImages_Praktiker')
 
 #image_dir=r'd:\DATA\Alinari'
 
